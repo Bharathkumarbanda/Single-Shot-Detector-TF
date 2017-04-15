@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 import cv2
-import random
+import random, os
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -83,7 +83,7 @@ def bboxes_draw_on_img(img, classes, scores, bboxes, colors, thickness=2):
 # =========================================================================== #
 # Matplotlib show...
 # =========================================================================== #
-def plt_bboxes(img, classes, scores, bboxes, figsize=(10,10), linewidth=1.5):
+def plt_bboxes(img, classes, scores, bboxes ,figsize=(10,10), linewidth=1.5):
     """Visualize bounding boxes. Largely inspired by SSD-MXNET!
     """
     fig = plt.figure(figsize=figsize)
@@ -93,10 +93,15 @@ def plt_bboxes(img, classes, scores, bboxes, figsize=(10,10), linewidth=1.5):
     colors = dict()
     for i in range(classes.shape[0]):
         cls_id = int(classes[i])
+        colors_tableau = [(255, 255, 255), (31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
+                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
+                  (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
+                  (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),
+                  (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
         if cls_id >= 0:
             score = scores[i]
-            if cls_id not in colors:
-                colors[cls_id] = (random.random(), random.random(), random.random())
+            for h in range(1,21):
+                colors[h] = '#%02x%02x%02x' % colors_tableau[h]
             ymin = int(bboxes[i, 0] * height)
             xmin = int(bboxes[i, 1] * width)
             ymax = int(bboxes[i, 2] * height)
@@ -106,9 +111,94 @@ def plt_bboxes(img, classes, scores, bboxes, figsize=(10,10), linewidth=1.5):
                                  edgecolor=colors[cls_id],
                                  linewidth=linewidth)
             plt.gca().add_patch(rect)
-            class_name = str(cls_id)
+            class_name = int(cls_id)
+            dic = {}
+            dic[1] = "Aeroplane"
+            dic[2] = "Bicycle"
+            dic[3] = "Bird"
+            dic[4] = "Boats"
+            dic[5] = "Bottles"
+            dic[6] = "Buses"
+            dic[7] = "Cars"
+            dic[8] = "Cats"
+            dic[9] = "Chairs"
+            dic[10] = "Cows"
+            dic[11] = "Dining tables"
+            dic[12] = "Dogs"
+            dic[13] = "Horses" 
+            dic[14] = "Motorbikes"
+            dic[15] = "Person"
+            dic[16] = "Potted plants"
+            dic[17] = "Sheep"
+            dic[18] = "Sofas"
+            dic[19] = "Trains"
+            dic[20] = "TV/Monitors"
+            
             plt.gca().text(xmin, ymin - 2,
-                           '{:s} | {:.3f}'.format(class_name, score),
+                           '{:s} | {:.3f}'.format(dic[class_name], score),
                            bbox=dict(facecolor=colors[cls_id], alpha=0.5),
                            fontsize=12, color='white')
     plt.show()
+
+#### Video Frames
+def plt_bboxes_save(img, classes, scores, bboxes, path, name ,figsize=(10,10), linewidth=1.5):
+    """Visualize bounding boxes. Largely inspired by SSD-MXNET!
+    """
+    fig = plt.figure(figsize=figsize)
+    plt.imshow(img)
+    plt.axis('off')
+    plt.set_cmap('hot')
+    height = img.shape[0]
+    width = img.shape[1]
+    colors = dict()
+    for i in range(classes.shape[0]):
+        cls_id = int(classes[i])
+        colors_tableau = [(255, 255, 255), (31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
+                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
+                  (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
+                  (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),
+                  (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
+        if cls_id >= 0:
+            score = scores[i]
+            for h in range(1,21):
+                colors[h] = '#%02x%02x%02x' % colors_tableau[h]
+            ymin = int(bboxes[i, 0] * height)
+            xmin = int(bboxes[i, 1] * width)
+            ymax = int(bboxes[i, 2] * height)
+            xmax = int(bboxes[i, 3] * width)
+            rect = plt.Rectangle((xmin, ymin), xmax - xmin,
+                                 ymax - ymin, fill=False,
+                                 edgecolor=colors[cls_id],
+                                 linewidth=linewidth)
+            plt.gca().add_patch(rect)
+            class_name = int(cls_id)
+            dic = {}
+            dic[1] = "Aeroplane"
+            dic[2] = "Bicycle"
+            dic[3] = "Bird"
+            dic[4] = "Boats"
+            dic[5] = "Bottles"
+            dic[6] = "Buses"
+            dic[7] = "Cars"
+            dic[8] = "Cats"
+            dic[9] = "Chairs"
+            dic[10] = "Cows"
+            dic[11] = "Dining tables"
+            dic[12] = "Dogs"
+            dic[13] = "Horses" 
+            dic[14] = "Motorbikes"
+            dic[15] = "Person"
+            dic[16] = "Potted plants"
+            dic[17] = "Sheep"
+            dic[18] = "Sofas"
+            dic[19] = "Trains"
+            dic[20] = "TV/Monitors"
+            plt.gca().text(xmin, ymin - 2,
+                           '{:s} | {:.3f}'.format(dic[class_name], score),
+                           bbox=dict(facecolor=colors[cls_id], alpha=0.5),
+                           fontsize=12, color='white')
+    os.chdir(path)
+    plt.savefig(name,bbox_inches='tight')
+    #plt.show()
+    plt.close()
+

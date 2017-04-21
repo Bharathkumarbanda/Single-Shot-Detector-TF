@@ -1,0 +1,4 @@
+pillow
+tensorflow
+matplolib
+python-opencv
